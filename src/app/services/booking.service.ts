@@ -13,4 +13,16 @@ export class BookingService {
       headers: getAuthHttpHeaders(),
     });
   }
+
+  public confirmBooking(id: string) {
+    return this.httpClient.post<void>(`${API_URL}/bookings/${id}/confirm`, null, {
+      headers: getAuthHttpHeaders(),
+    });
+  }
+
+  public cancelBooking(id: string) {
+    return this.httpClient.post<void>(`${API_URL}/bookings/${id}/cancel`, null, {
+      headers: getAuthHttpHeaders(),
+    });
+  }
 }

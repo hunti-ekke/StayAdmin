@@ -37,6 +37,11 @@
       </mat-card>
     </section>
 
+    @if (actionError()) {
+      <p class="action-error" role="alert">{{ actionError() }}</p>
+      <button mat-button type="button" (click)="loadBookings()">Lista frissítése</button>
+    }
+
     <mat-form-field class="status-filter" appearance="outline">
       <mat-label>Státusz</mat-label>
       <mat-select [formControl]="statusControl" (selectionChange)="applyFilter()">
@@ -80,6 +85,32 @@
                 <th mat-header-cell *matHeaderCellDef>Státusz</th>
                 <td mat-cell *matCellDef="let booking">
                   {{ statusLabel(booking.status) }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Műveletek</th>
+                <td mat-cell *matCellDef="let booking" class="actions-cell">
+                  @if (booking.status === bookingStatus.Pending) {
+                    <button
+                      mat-button
+                      type="button"
+                      [disabled]="updating()"
+                      (click)="confirmBooking(booking)"
+                    >
+                      Visszaigazolás
+                    </button>
+                  }
+                  @if (booking.status !== bookingStatus.Cancelled) {
+                    <button
+                      mat-button
+                      type="button"
+                      [disabled]="updating()"
+                      (click)="cancelBooking(booking)"
+                    >
+                      Lemondás
+                    </button>
+                  }
                 </td>
               </ng-container>
 

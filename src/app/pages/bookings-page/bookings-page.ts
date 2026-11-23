@@ -35,11 +35,14 @@ export class BookingsPage implements OnInit {
 
   public readonly statuses = Object.values(BookingStatus);
   public readonly statusLabels = bookingStatusLabels;
-  public readonly columns = ['guestName', 'propertyName', 'start', 'end', 'status'];
+  public readonly bookingStatus = BookingStatus;
+  public readonly columns = ['guestName', 'propertyName', 'start', 'end', 'status', 'actions'];
   public readonly bookings = signal<Booking[]>([]);
   public readonly selectedStatus = signal<BookingStatus | ''>('');
   public readonly loading = signal(false);
+  public readonly updating = signal(false);
   public readonly errorMessage = signal('');
+  public readonly actionError = signal('');
 
   public readonly statusControl =
     this.formBuilder.nonNullable.control<BookingStatus | ''>('');
@@ -69,6 +72,7 @@ export class BookingsPage implements OnInit {
   public loadBookings(): void {
     this.loading.set(true);
     this.errorMessage.set('');
+    this.actionError.set('');
 
     this.bookingService.getBookings().subscribe({
       next: (bookings) => {
@@ -99,5 +103,74 @@ export class BookingsPage implements OnInit {
 
   public statusLabel(status: BookingStatus): string {
     return this.statusLabels[status];
+  }
+
+  public confirmBooking(booking: Booking): void {
+    if (booking.status !== BookingStatus.Pending) {
+      return;
+    }
+
+    this.runAction(
+      booking,
+      'confirm',
+      `Biztosan visszaigazolod ${booking.guestName} foglalását?`,
+    );
+  }
+
+  public cancelBooking(booking: Booking): void {
+    if (
+      booking.status !== BookingStatus.Pending &&
+      booking.status !== BookingStatus.Confirmed
+    ) {
+      return;
+    }
+
+    this.runAction(
+      booking,
+      'cancel',
+      `Biztosan lemondod ${booking.guestName} foglalását?`,
+    );
+  }
+
+  private runAction(
+    booking: Booking,
+    action: 'confirm' | 'cancel',
+    message: string,
+  ): void {
+    if (this.updating() || !window.confirm(message)) {
+      return;
+    }
+
+    this.updating.set(true);
+    this.actionError.set('');
+
+    const request =
+      action === 'confirm'
+        ? this.bookingService.confirmBooking(booking.id)
+        : this.bookingService.cancelBooking(booking.id);
+
+    request.subscribe({
+      next: () => {
+        this.updating.set(false);
+        this.loadBookings();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.updating.set(false);
+
+        if (error.status === 401) {
+          this.authService.logout();
+          void this.router.navigateByUrl('/login');
+          return;
+        }
+
+        this.actionError.set(
+          error.status === 0
+            ? 'Az API nem érhető el.'
+            : error.status === 400 || error.status === 404
+              ? 'A művelet már nem hajtható végre. Frissítsd a listát.'
+              : 'Nem sikerült módosítani a foglalást.',
+        );
+      },
+    });
   }
 }
