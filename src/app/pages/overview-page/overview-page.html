@@ -47,6 +47,76 @@
             </mat-card-content>
           </mat-card>
         </section>
+
+        <section class="lists" aria-label="Foglalási listák">
+          <mat-card>
+            <mat-card-content>
+              <h2>Legutóbbi foglalások</h2>
+
+              @if (data.recentBookings.length === 0) {
+                <p>Ehhez a szálláshelyhez még nincs foglalás.</p>
+              } @else {
+                <div class="recent-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th scope="col">Foglalásazonosító</th>
+                        <th scope="col">Vendég</th>
+                        <th scope="col">Szálláshely</th>
+                        <th scope="col">Érkezés</th>
+                        <th scope="col">Távozás</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (booking of data.recentBookings; track booking.id) {
+                        <tr>
+                          <td>{{ booking.id }}</td>
+                          <td>{{ booking.guestName }}</td>
+                          <td>{{ booking.propertyName }}</td>
+                          <td>{{ booking.start }}</td>
+                          <td>{{ booking.end }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-content>
+              <h2>Közelgő érkezések</h2>
+
+              @if (data.upcomingCheckIns.length === 0) {
+                <p>Nincs érkezés a következő két napban.</p>
+              } @else {
+                <ul class="arrivals">
+                  @for (arrival of data.upcomingCheckIns; track $index) {
+                    <li>
+                      @if (arrival.imageUrl) {
+                        <img
+                          class="arrival-image"
+                          [src]="arrival.imageUrl"
+                          [alt]="arrival.propertyName"
+                          loading="lazy"
+                        />
+                      } @else {
+                        <div class="arrival-image image-placeholder">Nincs kép</div>
+                      }
+
+                      <div class="arrival-data">
+                        <strong>{{ arrival.guestName }}</strong>
+                        <span>Érkezés: {{ arrival.date }}</span>
+                        <span>{{ arrival.propertyName }}</span>
+                      </div>
+                    </li>
+                  }
+                </ul>
+              }
+            </mat-card-content>
+          </mat-card>
+        </section>
       }
     }
   }
