@@ -1,0 +1,42 @@
+<main class="properties-page">
+  <h1>Szálláshelyek</h1>
+
+  <form class="filters" [formGroup]="filterForm" (ngSubmit)="loadProperties()">
+    <mat-form-field appearance="outline">
+      <mat-label>Keresés név alapján</mat-label>
+      <input matInput type="search" formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Kategória</mat-label>
+      <mat-select formControlName="category">
+        <mat-option value="">Összes kategória</mat-option>
+        @for (category of categories; track category) {
+          <mat-option [value]="category">{{ categoryLabels[category] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div class="filter-actions">
+      <button mat-flat-button type="submit" [disabled]="loading()">Keresés</button>
+      <button mat-button type="button" (click)="clearFilters()" [disabled]="loading()">
+        Szűrők törlése
+      </button>
+    </div>
+  </form>
+
+  @if (loading()) {
+    <p role="status">Szálláshelyek betöltése...</p>
+  } @else if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+    <button mat-button type="button" (click)="loadProperties()">Újrapróbálás</button>
+  } @else if (properties().length === 0) {
+    <p>Nincs a szűrésnek megfelelő szálláshely.</p>
+  } @else {
+    <div class="property-grid">
+      @for (property of properties(); track property.id) {
+        <app-property-card [property]="property"></app-property-card>
+      }
+    </div>
+  }
+</main>

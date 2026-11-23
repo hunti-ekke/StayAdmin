@@ -1,0 +1,12 @@
+<mat-card>
+  @if (property.imageUrl) {
+    <img class="image" [src]="property.imageUrl" [alt]="property.name" loading="lazy" />
+  } @else {
+    <div class="image image-placeholder">Nincs kép</div>
+  }
+
+  <mat-card-content>
+    <h2>{{ property.name }}</h2>
+    <p>{{ property.location }} · {{ categoryLabels[property.category] }}</p>
+  </mat-card-content>
+</mat-card>

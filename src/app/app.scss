@@ -15,7 +15,9 @@
 }
 
 nav {
+  display: flex;
   flex: 1;
+  gap: 20px;
 }
 
 nav a {
