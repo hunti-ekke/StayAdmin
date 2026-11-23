@@ -1,59 +1,40 @@
-# Stayadmin
+# StayAdmin
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.3.0.
+Angular alapú adminfelület szálláshelyek és foglalások kezeléséhez. Az alkalmazás a beadandóhoz kapott REST API-t használja.
 
-## Development server
+## Előkészületek
 
-To start a local development server, run:
+A frontend Git-repója a `StayAdmin` mappa. A kapott `stayadmin-api` mappa ennek testvérmappája; a backend nem része a repónak.
 
-```bash
-ng serve
-```
+Az API mappájában futtasd:
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+1. `npm install`
+2. `npm run seed`
+3. `npm start`
 
-## Code scaffolding
+Az API címe: `http://localhost:3000`. A `seed` parancs létrehozza az alapadatokat. Későbbi futtatása visszaállítja az alapadatokat, és felülírja az API-ban addig végzett módosításokat; előtte állítsd le az API-t.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Frontend indítása
 
-```bash
-ng generate component component-name
-```
+A `StayAdmin` mappában futtasd:
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+1. `npm ci`
+2. `npm run start`
 
-```bash
-ng generate --help
-```
+Ezután az alkalmazás a `http://localhost:4200` címen érhető el. Az API-nak külön terminálban futnia kell.
 
-## Building
+A kapott tesztfelhasználó adatai:
 
-To build the project run:
+- Felhasználónév: `Admin`
+- Jelszó: `1234`
 
-```bash
-ng build
-```
+## Funkciók
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- Bejelentkezés, kijelentkezés és védett oldalak
+- Szálláshelyek listázása, szűrése, létrehozása, szerkesztése és törlése
+- Foglalások listázása, státusz szerinti szűrése, visszaigazolása és lemondása
+- Szálláshelyenkénti áttekintés mai adatokkal, legutóbbi foglalásokkal és közelgő érkezésekkel
 
-## Running unit tests
+## Build
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+A `StayAdmin` mappában futtasd: `npm run build`.
