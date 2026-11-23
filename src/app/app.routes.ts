@@ -30,6 +30,12 @@ export const routes: Routes = [
       import('./pages/property-editor/property-editor').then((m) => m.PropertyEditor),
     canActivate: [authGuard],
   },
+  {
+    path: 'bookings',
+    loadComponent: () =>
+      import('./pages/bookings-page/bookings-page').then((m) => m.BookingsPage),
+    canActivate: [authGuard],
+  },
   { path: '', pathMatch: 'full', redirectTo: 'overview' },
   { path: '**', redirectTo: 'overview' },
 ];

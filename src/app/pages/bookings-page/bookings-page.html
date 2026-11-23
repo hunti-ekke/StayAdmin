@@ -1,0 +1,94 @@
+<main class="bookings-page">
+  <h1>Foglalások</h1>
+
+  @if (loading()) {
+    <p role="status">Foglalások betöltése...</p>
+  } @else if (errorMessage()) {
+    <p role="alert">{{ errorMessage() }}</p>
+    <button mat-button type="button" (click)="loadBookings()">Újrapróbálás</button>
+  } @else {
+    <section class="summary" aria-label="Foglalások összesítése">
+      <mat-card>
+        <mat-card-content>
+          <span>Összes</span>
+          <strong>{{ summary().total }}</strong>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <span>Függőben</span>
+          <strong>{{ summary().pending }}</strong>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <span>Visszaigazolt</span>
+          <strong>{{ summary().confirmed }}</strong>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <span>Lemondva</span>
+          <strong>{{ summary().cancelled }}</strong>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <mat-form-field class="status-filter" appearance="outline">
+      <mat-label>Státusz</mat-label>
+      <mat-select [formControl]="statusControl" (selectionChange)="applyFilter()">
+        <mat-option value="">Összes</mat-option>
+        @for (status of statuses; track status) {
+          <mat-option [value]="status">{{ statusLabels[status] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (bookings().length === 0) {
+      <p>Még nincs foglalás.</p>
+    } @else if (filteredBookings().length === 0) {
+      <p>Nincs a kiválasztott státuszú foglalás.</p>
+    } @else {
+      <mat-card class="table-card">
+        <mat-card-content>
+          <div class="table-scroll">
+            <table mat-table [dataSource]="filteredBookings()" aria-label="Foglalások listája">
+              <ng-container matColumnDef="guestName">
+                <th mat-header-cell *matHeaderCellDef>Vendég neve</th>
+                <td mat-cell *matCellDef="let booking">{{ booking.guestName }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="propertyName">
+                <th mat-header-cell *matHeaderCellDef>Szálláshely</th>
+                <td mat-cell *matCellDef="let booking">{{ booking.propertyName }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="start">
+                <th mat-header-cell *matHeaderCellDef>Érkezés</th>
+                <td mat-cell *matCellDef="let booking">{{ booking.start }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="end">
+                <th mat-header-cell *matHeaderCellDef>Távozás</th>
+                <td mat-cell *matCellDef="let booking">{{ booking.end }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Státusz</th>
+                <td mat-cell *matCellDef="let booking">
+                  {{ statusLabel(booking.status) }}
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="columns"></tr>
+              <tr mat-row *matRowDef="let row; columns: columns"></tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</main>
