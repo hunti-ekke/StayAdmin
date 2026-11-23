@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { PropertyCategory } from '../models/property-category';
 import { Property, PropertyInput } from '../models/property.model';
+import { PropertyOverview } from '../models/property-overview.model';
 import { PropertySummary } from '../models/property-summary.model';
 import { API_URL } from './api-url';
 import { getAuthHttpHeaders } from './auth-headers';
@@ -47,6 +48,12 @@ export class PropertyService {
 
   public deleteProperty(id: string) {
     return this.httpClient.delete<void>(`${API_URL}/properties/${id}`, {
+      headers: getAuthHttpHeaders(),
+    });
+  }
+
+  public getOverview(id: string) {
+    return this.httpClient.get<PropertyOverview>(`${API_URL}/properties/${id}/overview`, {
       headers: getAuthHttpHeaders(),
     });
   }

@@ -1,4 +1,53 @@
 <main class="overview-page">
   <h1>Áttekintés</h1>
-  <p>Üdv a StayAdmin felületén.</p>
+
+  @if (loadingProperties()) {
+    <p role="status">Szálláshelyek betöltése...</p>
+  } @else if (propertiesError()) {
+    <p role="alert">{{ propertiesError() }}</p>
+    <button mat-button type="button" (click)="loadProperties()">Újrapróbálás</button>
+  } @else if (properties().length === 0) {
+    <p>Nem található szálláshely.</p>
+  } @else {
+    <mat-form-field class="property-select" appearance="outline">
+      <mat-label>Szálláshely</mat-label>
+      <mat-select [formControl]="propertyControl" (selectionChange)="loadOverview()">
+        @for (property of properties(); track property.id) {
+          <mat-option [value]="property.id">{{ property.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (loadingOverview()) {
+      <p role="status">Áttekintés betöltése...</p>
+    } @else if (overviewError()) {
+      <p role="alert">{{ overviewError() }}</p>
+      <button mat-button type="button" (click)="loadOverview()">Újrapróbálás</button>
+    } @else {
+      @if (overview(); as data) {
+        <section class="stats" aria-label="Mai adatok">
+          <mat-card>
+            <mat-card-content>
+              <span>Mai foglalások száma</span>
+              <strong>{{ data.today.booked }}</strong>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-content>
+              <span>Mai érkezések</span>
+              <strong>{{ data.today.checkIns }}</strong>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card>
+            <mat-card-content>
+              <span>Mai távozások</span>
+              <strong>{{ data.today.checkOuts }}</strong>
+            </mat-card-content>
+          </mat-card>
+        </section>
+      }
+    }
+  }
 </main>
