@@ -1,13 +1,35 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './guards/auth.guard';
-import { LoginPage } from './pages/login-page/login-page';
-import { OverviewPage } from './pages/overview-page/overview-page';
-import { PropertiesPage } from './pages/properties-page/properties-page';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginPage, canActivate: [guestGuard] },
-  { path: 'overview', component: OverviewPage, canActivate: [authGuard] },
-  { path: 'properties', component: PropertiesPage, canActivate: [authGuard] },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login-page/login-page').then((m) => m.LoginPage),
+    canActivate: [guestGuard],
+  },
+  {
+    path: 'overview',
+    loadComponent: () => import('./pages/overview-page/overview-page').then((m) => m.OverviewPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'properties',
+    loadComponent: () =>
+      import('./pages/properties-page/properties-page').then((m) => m.PropertiesPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'properties/new',
+    loadComponent: () =>
+      import('./pages/property-editor/property-editor').then((m) => m.PropertyEditor),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'properties/:id/edit',
+    loadComponent: () =>
+      import('./pages/property-editor/property-editor').then((m) => m.PropertyEditor),
+    canActivate: [authGuard],
+  },
   { path: '', pathMatch: 'full', redirectTo: 'overview' },
   { path: '**', redirectTo: 'overview' },
 ];

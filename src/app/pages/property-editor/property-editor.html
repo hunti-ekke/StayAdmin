@@ -1,0 +1,157 @@
+<main class="editor-page">
+  <div class="page-header">
+    <h1>{{ isEditMode ? 'Szálláshely szerkesztése' : 'Új szálláshely' }}</h1>
+    <a mat-button routerLink="/properties">Vissza a listához</a>
+  </div>
+
+  @if (loading()) {
+    <p role="status">Szálláshely betöltése...</p>
+  } @else if (loadError()) {
+    <p role="alert">{{ loadError() }}</p>
+    <button mat-button type="button" (click)="loadProperty()">Újrapróbálás</button>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Név</mat-label>
+              <input matInput formControlName="name" required />
+              @if (form.controls.name.touched && form.controls.name.invalid) {
+                <mat-error>Adj meg egy nevet.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Város</mat-label>
+              <input matInput formControlName="location" required />
+              @if (form.controls.location.touched && form.controls.location.invalid) {
+                <mat-error>Adj meg egy várost.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Cím</mat-label>
+              <input matInput formControlName="address" required />
+              @if (form.controls.address.touched && form.controls.address.invalid) {
+                <mat-error>Adj meg egy címet.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Kategória</mat-label>
+              <mat-select formControlName="category" required>
+                @for (category of categories; track category) {
+                  <mat-option [value]="category">{{ categoryLabels[category] }}</mat-option>
+                }
+              </mat-select>
+              @if (form.controls.category.touched && form.controls.category.invalid) {
+                <mat-error>Válassz kategóriát.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field class="full" appearance="outline">
+              <mat-label>Leírás</mat-label>
+              <textarea matInput formControlName="description" rows="4"></textarea>
+            </mat-form-field>
+
+            <mat-form-field class="full" appearance="outline">
+              <mat-label>Kép URL</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="imageUrl"
+                (input)="previewFailed.set(false)"
+              />
+            </mat-form-field>
+          </div>
+
+          @if (form.controls.imageUrl.value.trim()) {
+            <div class="image-preview">
+              @if (previewFailed()) {
+                <p role="status">A kép nem tölthető be.</p>
+              } @else {
+                <img
+                  [src]="form.controls.imageUrl.value"
+                  alt="A szálláshely képének előnézete"
+                  (error)="previewFailed.set(true)"
+                />
+              }
+            </div>
+          }
+
+          <h2>Szobaárak éjszakánként</h2>
+
+          <div class="price-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Standard szoba (2 fő)</mat-label>
+              <input
+                matInput
+                type="number"
+                min="0"
+                step="any"
+                formControlName="standardPrice"
+                required
+                (input)="clampPrice($event, 'standardPrice')"
+              />
+              @if (form.controls.standardPrice.touched && form.controls.standardPrice.hasError('required')) {
+                <mat-error>Adj meg egy árat.</mat-error>
+              } @else if (form.controls.standardPrice.touched && form.controls.standardPrice.hasError('min')) {
+                <mat-error>Az ár nem lehet negatív.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Superior szoba (3 fő)</mat-label>
+              <input
+                matInput
+                type="number"
+                min="0"
+                step="any"
+                formControlName="superiorPrice"
+                required
+                (input)="clampPrice($event, 'superiorPrice')"
+              />
+              @if (form.controls.superiorPrice.touched && form.controls.superiorPrice.hasError('required')) {
+                <mat-error>Adj meg egy árat.</mat-error>
+              } @else if (form.controls.superiorPrice.touched && form.controls.superiorPrice.hasError('min')) {
+                <mat-error>Az ár nem lehet negatív.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Családi szoba (4 fő)</mat-label>
+              <input
+                matInput
+                type="number"
+                min="0"
+                step="any"
+                formControlName="familyPrice"
+                required
+                (input)="clampPrice($event, 'familyPrice')"
+              />
+              @if (form.controls.familyPrice.touched && form.controls.familyPrice.hasError('required')) {
+                <mat-error>Adj meg egy árat.</mat-error>
+              } @else if (form.controls.familyPrice.touched && form.controls.familyPrice.hasError('min')) {
+                <mat-error>Az ár nem lehet negatív.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          @if (saveError()) {
+            <p class="save-error" role="alert">{{ saveError() }}</p>
+          }
+
+          <div class="actions">
+            <button mat-button type="button" routerLink="/properties" [disabled]="saving()">
+              Mégse
+            </button>
+            <button mat-flat-button type="submit" [disabled]="saving()">
+              {{ saving() ? 'Mentés...' : 'Mentés' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</main>

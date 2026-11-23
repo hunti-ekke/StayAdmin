@@ -1,5 +1,8 @@
 <main class="properties-page">
-  <h1>Szálláshelyek</h1>
+  <div class="page-header">
+    <h1>Szálláshelyek</h1>
+    <a mat-flat-button routerLink="/properties/new">Új szálláshely</a>
+  </div>
 
   <form class="filters" [formGroup]="filterForm" (ngSubmit)="loadProperties()">
     <mat-form-field appearance="outline">
@@ -25,6 +28,11 @@
     </div>
   </form>
 
+  @if (actionError()) {
+    <p class="action-error" role="alert">{{ actionError() }}</p>
+    <button mat-button type="button" (click)="loadProperties()">Lista frissítése</button>
+  }
+
   @if (loading()) {
     <p role="status">Szálláshelyek betöltése...</p>
   } @else if (errorMessage()) {
@@ -35,7 +43,11 @@
   } @else {
     <div class="property-grid">
       @for (property of properties(); track property.id) {
-        <app-property-card [property]="property"></app-property-card>
+        <app-property-card
+          [property]="property"
+          [busy]="deleting()"
+          (deleteRequested)="deleteProperty($event)"
+        ></app-property-card>
       }
     </div>
   }

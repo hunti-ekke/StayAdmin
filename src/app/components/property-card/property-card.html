@@ -9,4 +9,18 @@
     <h2>{{ property.name }}</h2>
     <p>{{ property.location }} · {{ categoryLabels[property.category] }}</p>
   </mat-card-content>
+
+  <div class="actions">
+    <button
+      mat-button
+      type="button"
+      [routerLink]="['/properties', property.id, 'edit']"
+      [disabled]="busy"
+    >
+      Szerkesztés
+    </button>
+    <button mat-button type="button" (click)="deleteRequested.emit(property)" [disabled]="busy">
+      Törlés
+    </button>
+  </div>
 </mat-card>
